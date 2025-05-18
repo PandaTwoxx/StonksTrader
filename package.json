@@ -25,7 +25,6 @@
     "tsc": "^2.0.4"
   },
   "dependencies": {
-    "@ngrok/ngrok": "^1.5.1",
     "discord.js": "^14.19.3",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
