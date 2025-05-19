@@ -1,5 +1,5 @@
 [build]
-cmd = "yarn install && yarn build"
+buildCommand = "yarn install && yarn build"
 
-[start]
-cmd = "yarn start"
+[deploy]
+startCommand = "yarn start"
