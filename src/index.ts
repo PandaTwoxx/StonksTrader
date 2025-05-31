@@ -77,11 +77,15 @@ const rest = new REST({ version: '10' }).setToken(process.env.TOKEN || '');
 
     console.log('Database connection successful!');
 
-    console.log('Starting Express server on port: ', PORT);
-    app.listen(PORT, () => {
-      console.log(`Server started successfully on http://localhost:${PORT}`);
-    });
+    if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+      console.log('Starting Express server on port: ', PORT);
+      app.listen(PORT, () => {
+        console.log(`Server started successfully on http://localhost:${PORT}`);
+      });
+    }
   } catch (error) {
     console.error(error);
   }
 })();
+
+export default app;
