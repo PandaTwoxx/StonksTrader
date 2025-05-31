@@ -25,6 +25,9 @@ app.post('/interactions', (req, res) => {
   res.json({ type: 1 }); // ACK the interaction
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).send('Bot is running and healthy!');
+});
 
 client.once(Events.ClientReady, () => {
   console.log('Ready! Logged in as ${readyClient.user.tag}');
