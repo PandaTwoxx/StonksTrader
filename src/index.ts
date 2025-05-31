@@ -1,4 +1,5 @@
 import { Client, GatewayIntentBits, Events, REST, Routes } from 'discord.js';
+import prisma from './db';
 import express from 'express';
 import dotenv from 'dotenv';
 
@@ -66,6 +67,17 @@ const rest = new REST({ version: '10' }).setToken(process.env.TOKEN || '');
     );
 
     console.log('Successfully reloaded application (/) commands.');
+
+    console.log('Checking database connection...');
+
+    await prisma.$connect();
+
+    console.log('Database connection successful!');
+
+    console.log('Starting Express server on port: ', PORT);
+    app.listen(PORT, () => {
+      console.log(`Server started successfully on http://localhost:${PORT}`);
+    });
   } catch (error) {
     console.error(error);
   }
