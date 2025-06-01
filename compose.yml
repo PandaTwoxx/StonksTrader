@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ssl-certs:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    command: >
+      sh -c "
+        if [ ! -f /etc/letsencrypt/live/your-domain.com/fullchain.pem ]; then
+          certbot certonly --standalone --email your-email@example.com 
+            --agree-tos --no-eff-email -d your-domain.com
+        fi
+      "
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "443:443"
+      - "8080:80"  # Changed to avoid conflict with certbot
+    volumes:
+      - ./nginx-le.conf:/etc/nginx/nginx.conf
+      - ssl-certs:/etc/letsencrypt
+    depends_on:
+      - certbot
+      - app
+    networks:
+      - app-network
+
+volumes:
+  ssl-certs:
+  certbot-var:
+
+networks:
+  app-network:
+    driver: bridge
