@@ -31,7 +31,7 @@ app.get('/health', (req, res) => {
 });
 
 client.once(Events.ClientReady, () => {
-  console.log('Ready! Logged in as ${readyClient.user.tag}');
+  console.log(`Ready! Logged in as ${client.user ? client.user.tag : 'unknown'}`);
 });
 
 client.on(Events.MessageCreate, async message => {
