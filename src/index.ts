@@ -37,11 +37,11 @@ client.once(Events.ClientReady, () => {
 client.on(Events.MessageCreate, async message => {
   if (message.author.bot) return;
 
-  if (message.content.startsWith('!hello')) {
+  if (message.content.startsWith('/hello')) {
     message.reply('Hello there!');
   }
   
-  if (message.content.startsWith('!ping')) {
+  if (message.content.startsWith('/ping')) {
     message.reply('Pong!');
   }
 });
