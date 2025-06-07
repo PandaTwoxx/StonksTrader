@@ -1,8 +1,6 @@
-import { Client, GatewayIntentBits, Events, REST, Routes } from 'discord.js';
+import { Client, GatewayIntentBits, Events, REST, Routes, Interaction } from 'discord.js';
 import prisma from './db';
-import express from 'express';
 import dotenv from 'dotenv';
-import ngrok from '@ngrok/ngrok';
 
 dotenv.config();
 
@@ -14,35 +12,21 @@ const client = new Client({
   ]
 });
 
-// Set up Express for HTTP interactions (needed for ngrok)
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(express.json());
-
-// This endpoint can be used to receive interactions if you set up Discord to use HTTP interactions
-app.post('/interactions', (req, res) => {
-  console.log('Received interaction:', req.body);
-  res.json({ type: 1 }); // ACK the interaction
-});
-
-app.get('/health', (req, res) => {
-  res.status(200).send('Bot is running and healthy!');
-});
-
 client.once(Events.ClientReady, () => {
-  console.log(`Ready! Logged in as ${client.user ? client.user.tag : 'unknown'}`);
+  console.log(`Ready! Logged in as ${client.user?.tag}`);
 });
 
-client.on(Events.MessageCreate, async message => {
-  if (message.author.bot) return;
+client.on(Events.InteractionCreate, async (interaction: Interaction) => {
+  if (!interaction.isChatInputCommand()) return;
 
-  if (message.content.startsWith('/hello')) {
-    message.reply('Hello there!');
+  const { commandName } = interaction;
+
+  if (commandName === 'ping') {
+    await interaction.reply('Pong!');
   }
-  
-  if (message.content.startsWith('/ping')) {
-    message.reply('Pong!');
+
+  if (commandName === 'hello') {
+    await interaction.reply(`Hello, ${interaction.user.username}!`);
   }
 });
 
@@ -66,30 +50,16 @@ const rest = new REST({ version: '10' }).setToken(process.env.TOKEN || '');
     console.log('Started refreshing application (/) commands.');
 
     await rest.put(
-    Routes.applicationCommands(process.env.CLIENT_ID || ''),
+      Routes.applicationCommands(process.env.CLIENT_ID || ''),
       { body: commands },
     );
 
     console.log('Successfully reloaded application (/) commands.');
 
     console.log('Checking database connection...');
-
     await prisma.$connect();
-
     console.log('Database connection successful!');
-
-    if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-      console.log('Starting Express server on port: ', PORT);
-      app.listen(PORT, () => {
-        console.log(`Server started successfully on http://localhost:${PORT}`);
-      });
-    }
   } catch (error) {
     console.error(error);
   }
 })();
-
-ngrok.connect({ addr: 8080, authtoken_from_env: true })
-	.then(listener => console.log(`Ingress established at: ${listener.url()}`));
-
-export default app;

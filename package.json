@@ -22,18 +22,15 @@
     "dev": "ts-node src/index.ts"
   },
   "devDependencies": {
-    "@types/express": "^5.0.2",
     "@types/node": "^22.15.19",
     "prisma": "6.8.2",
     "ts-node": "^10.9.2",
     "tsc": "^2.0.4"
   },
   "dependencies": {
-    "@ngrok/ngrok": "^1.5.1",
     "@prisma/client": "6.8.2",
     "discord.js": "^14.19.3",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0",
     "typescript": "^5.8.3"
   },
   "packageManager": "yarn@4.9.1"
