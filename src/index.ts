@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits, Events, REST, Routes } from 'discord.js';
 import prisma from './db';
 import express from 'express';
 import dotenv from 'dotenv';
+import ngrok from '@ngrok/ngrok';
 
 dotenv.config();
 
@@ -87,5 +88,8 @@ const rest = new REST({ version: '10' }).setToken(process.env.TOKEN || '');
     console.error(error);
   }
 })();
+
+ngrok.connect({ addr: 8080, authtoken_from_env: true })
+	.then(listener => console.log(`Ingress established at: ${listener.url()}`));
 
 export default app;
