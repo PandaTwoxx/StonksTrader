@@ -37,14 +37,16 @@ model trades {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model users {
-  id                         BigInt        @id @default(autoincrement())
-  tokens                     BigInt?       @default(0)
-  last_redemtion             DateTime?     @db.Timestamptz(6)
-  created_at                 DateTime      @default(now()) @db.Timestamptz(6)
-  username                   String?
-  trades_trades_user1Tousers trades[]      @relation("trades_user1Tousers")
-  trades_trades_user2Tousers trades[]      @relation("trades_user2Tousers")
-  users_items                users_items[]
+  id                                          BigInt         @id @default(autoincrement())
+  tokens                                      BigInt?        @default(0)
+  last_redemtion                              DateTime?      @db.Timestamptz(6)
+  created_at                                  DateTime       @default(now()) @db.Timestamptz(6)
+  username                                    String?
+  trades_trades_user1Tousers                  trades[]       @relation("trades_user1Tousers")
+  trades_trades_user2Tousers                  trades[]       @relation("trades_user2Tousers")
+  transactions_transactions_fromuseridTousers transactions[] @relation("transactions_fromuseridTousers")
+  transactions_transactions_touseridTousers   transactions[] @relation("transactions_touseridTousers")
+  users_items                                 users_items[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -55,4 +57,15 @@ model users_items {
   item_type  BigInt?
   item       item?    @relation(fields: [item_type], references: [id], onDelete: Cascade, onUpdate: NoAction)
   users      users?   @relation(fields: [owner], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model transactions {
+  id                                   BigInt   @id @default(autoincrement())
+  created_at                           DateTime @default(now()) @db.Timestamptz(6)
+  touserid                             BigInt?
+  amount                               BigInt?
+  fromuserid                           BigInt
+  users_transactions_fromuseridTousers users    @relation("transactions_fromuseridTousers", fields: [fromuserid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_transactions_touseridTousers   users?   @relation("transactions_touseridTousers", fields: [touserid], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
